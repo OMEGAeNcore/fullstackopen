@@ -24,22 +24,18 @@ const Button = ({ onClick, text }) => {
 }
 
 const App = () => {
-  const [ clicks, setClicks ] = useState({
-    left: 0, right: 0
-  })
+  const [ left, setLeft ] = useState(0)
+  const [ right, setRight ] = useState(0)
+  const [allClicks, setAll] = useState([])
 
   const handleLeftClick = () => {
-    setClicks({
-      ...clicks,
-      left: clicks.left + 1
-    })
+    setAll(allClicks.concat('L'))
+    setLeft(left + 1)
   }
 
   const handleRightClick = () => {
-    setClicks({
-      ...clicks,
-      right: clicks.right + 1
-    })
+    setAll(allClicks.concat('R'))
+    setRight(right + 1)
   }
   const name = "Peter"
   const age = 10
@@ -52,10 +48,11 @@ const App = () => {
 
       <hr />
       
-      {clicks.left}
+      {left}
       <button onClick={handleLeftClick} >left</button>
-      {clicks.right}
+      {right}
       <button onClick={handleRightClick} >right</button>
+      <p>{allClicks.join(' ')}</p>
     </>
   )
 }
