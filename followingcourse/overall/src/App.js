@@ -55,10 +55,10 @@ const App = () => {
     setRight(right + 1)
   }
 
-  const hello = (who) => {
-    const handler = () => console.log('hello ', who)
-    return handler
-  }
+  // const hello = (who) => {
+  //   const handler = () => console.log('hello ', who)
+  //   return handler
+  // }
 
   const setToValue = (newValue) => () => {
     setValue(newValue)
