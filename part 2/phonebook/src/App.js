@@ -68,11 +68,8 @@ const App = () => {
       <PersonForm addNumber={addNumber} formHandlers={formHandlers} />
       
       <h3>Numbers</h3>
-      {
-        persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase())).map(person => 
-            <Person key={person.id} person={person} />
-          )
-      }
+      <Person persons={persons} filter={filter}/>
+      
     </div>
   )
 }

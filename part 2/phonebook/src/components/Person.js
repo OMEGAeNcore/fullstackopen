@@ -1,8 +1,12 @@
-const Person = ({ person }) => {
+const Person = ({ persons, filter }) => {
     return (
         <div>
-            {person.name} {person.number}
-        </div>
+            {
+                persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase())).map(person => 
+                    <div> {person.name} {person.number} </div>
+                )
+            }
+        </div>    
     )
 }
 
