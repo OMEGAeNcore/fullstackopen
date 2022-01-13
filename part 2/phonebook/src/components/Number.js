@@ -1,7 +1,7 @@
-const Number = ({ name }) => {
+const Number = ({ person }) => {
     return (
         <div>
-            {name}
+            {person.name} {person.number}
         </div>
     )
 }
