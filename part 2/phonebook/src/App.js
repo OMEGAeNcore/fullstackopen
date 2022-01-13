@@ -11,19 +11,31 @@ const App = () => {
 
   const addNumber = (event) => {
     event.preventDefault()
-    const newPersonObject = {
-      id: persons.length + 1,
-      name: newPerson
+    let hasValue = false
+    for(let i in persons){
+      if(persons[i].name === newPerson){
+        hasValue = true
+        break
+      }
     }
-
-    setPersons(persons.concat(newPersonObject))
-    setNewPerson('')
+    if(hasValue){
+      window.alert(`${newPerson} is already added to phonebook`)
+      setNewPerson('')
+    } else {
+        const newPersonObject = {
+          id: persons.length + 1,
+          name: newPerson
+        }
+    
+        setPersons(persons.concat(newPersonObject))
+        setNewPerson('')
+    }
   }
 
   return (
     <div>
       <h1>Phonebook</h1>
-      <form onClick={addNumber}>
+      <form onSubmit={addNumber}>
         <div>
           <label>Name:</label>
           <input value={newPerson} onChange={handleNewNumber} />        
