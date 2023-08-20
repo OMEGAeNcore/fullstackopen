@@ -8,15 +8,12 @@ const App = () => {
   const [showAll, setShowAll] = useState(true);
 
   const hook = () => {
-    console.log("effect");
-    noteService.getAll.then((response) => {
-      console.log("promise fulfilled");
-      setNotes(response.data);
+    noteService.getAll().then(initialNotes => {
+      setNotes(initialNotes);
     });
   };
 
   useEffect(hook, []);
-  console.log("render", notes.length, "notes");
 
   const notesToShow = showAll ? notes : notes.filter((note) => note.important);
 
@@ -27,8 +24,8 @@ const App = () => {
       important: Math.random() < 0.5,
     };
 
-    noteService.create(noteObject).then((response) => {
-      setNotes(notes.concat(response.data));
+    noteService.create(noteObject).then(returnedNote => {
+      setNotes(notes.concat(returnedNote));
       setNewNote("");
     });
   };
@@ -38,13 +35,15 @@ const App = () => {
     setNewNote(event.target.value);
   };
 
-  const toggleImportance = (id) => {
-    const url = `http://localhost:3001/notes/${id}`
+  const toggleImportanceOf = (id) => {
     const note = notes.find(n => n.id === id)
-    const changedNote = {...note, importance: !note.importance}
+    const changedNote = {...note, important: !note.important}
 
-    noteService.update(url,changedNote).then(response => {
-      setNotes(notes.map(n => n.id!==id ? n: response.data))
+    noteService.update(id,changedNote).then(returnedNote => {
+      setNotes(notes.map(note => note.id!==id ? note: returnedNote))
+    }).catch(error => {
+      alert(`the note '${note.content}' was already deleted from the server.`)
+      setNotes(notes.filter(note => note.id !== id))
     })
   }
 
@@ -58,7 +57,7 @@ const App = () => {
       </div>
       <ul>
         {notesToShow.map((note) => (
-          <Note key={note.id} note={note} toggleImportance={() => toggleImportance(note.id)}/>
+          <Note key={note.id} note={note} toggleImportance={() => toggleImportanceOf(note.id)}/>
         ))}
       </ul>
       <form onSubmit={addNote}>

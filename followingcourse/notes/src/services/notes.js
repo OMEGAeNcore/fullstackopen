@@ -1,20 +1,23 @@
 import axios from "axios";
-const baseUrl = 'http://localhost:3001/notes'
+const baseUrl = "http://localhost:3001/notes";
 
 const getAll = () => {
-    return axios.get(baseUrl)
-}
+  const request = axios.get(baseUrl);
+  return request.then((response) => response.data);
+};
 
-const create = newObj => {
-    return axios.post(baseUrl, newObj)
-}
+const create = (newObj) => {
+  const request = axios.post(baseUrl, newObj);
+  return request.then((response) => response.data);
+};
 
 const update = (id, newObj) => {
-    return axios.put(`${baseUrl}/${id}`, newObj)
-}
+  const request = axios.put(`${baseUrl}/${id}`, newObj);
+  return request.then((response) => response.data);
+};
 
 export default {
-    getAll: getAll,
-    create: create,
-    update: update
-}
+  getAll,
+  update,
+  create,
+};
