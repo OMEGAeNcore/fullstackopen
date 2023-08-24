@@ -3,22 +3,25 @@
     {
       "id": 1,
       "content": "HTML is easy",
-      "important": true
+      "important": true,
+      "importance": true
     },
     {
       "id": 2,
       "content": "Browser can execute only JavaScript",
-      "important": false
+      "important": false,
+      "importance": true
     },
     {
       "id": 3,
       "content": "GET and POST are the most important methods of HTTP protocol",
-      "important": true
+      "important": false,
+      "importance": true
     },
     {
       "content": "Testing post",
       "date": "2023-08-20T21:28:49.587Z",
-      "important": true,
+      "important": false,
       "id": 4
     },
     {
@@ -28,8 +31,18 @@
     },
     {
       "content": "check 2",
-      "important": false,
+      "important": true,
       "id": 6
+    },
+    {
+      "content": "new Note",
+      "important": true,
+      "id": 7
+    },
+    {
+      "content": "sdad",
+      "important": false,
+      "id": 8
     }
   ]
 }
