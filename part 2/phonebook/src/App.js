@@ -2,23 +2,32 @@ import React, { useState, useEffect } from "react";
 import Person from "./components/Person";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
+import Notification from "./components/Notification";
 
 import person from "./services/person";
 
 const App = () => {
   const URL = "http://localhost:3001/persons";
-  const [persons, setPersons] = useState([]);
+  const [persons, setPersons] = useState(null);
   const [newPerson, setNewPerson] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setNewFilter] = useState("");
+  const [message, setMessage] = useState(null);
+  const [type, setType] = useState(null);
+  const [personIds, setPersonIds] = useState(0);
 
   const hook = () => {
     person.getAll().then((initPerson) => {
       setPersons(initPerson);
+      setPersonIds(initPerson.length);
     });
   };
 
   useEffect(hook, []);
+
+  if(!persons){
+    return null
+  }
 
   const handleNewPerson = (event) => {
     setNewPerson(event.target.value);
@@ -51,31 +60,67 @@ const App = () => {
     ) {
       const findPerson = persons.find((person) => person.id == hasId);
       const changedPersonObject = { ...findPerson, number: newNumber };
-      person.update(hasId, changedPersonObject).then((updated) => {
-        setPersons(
-          persons.map((person) =>
-            person.id === hasId
-              ? {
-                  ...person,
-                  number: newNumber,
-                }
-              : person
-          )
-        );
-      });
+      person
+        .update(hasId, changedPersonObject)
+        .then((updated) => {
+          setMessage(
+            `Updated 
+            ${changedPersonObject.name}`
+          );
+          setType("UPDATED");
+          setTimeout(() => {
+            setMessage(null);
+            setType(null);
+          }, 5000);
+          setPersons(
+            persons.map((person) =>
+              person.id === hasId
+                ? {
+                    ...person,
+                    number: newNumber,
+                  }
+                : person
+            )
+          );
+
+          setNewPerson("");
+          setNewNumber("");
+        })
+        .catch((error) => {
+          setMessage(
+            `Information of  
+            ${changedPersonObject.name} has already been removed from server`
+          );
+          setType("NO_DATA");
+          setTimeout(() => {
+            setMessage(null);
+            setType(null);
+          }, 5000);
+        });
     } else {
       const newPersonObject = {
-        id: persons.length + 1,
+        id: personIds + 1,
         name: newPerson,
         number: newNumber,
       };
+      setPersonIds(personIds + 1);
+
       person.create(newPersonObject).then((newPerson) => {
+        setMessage(
+          `Added 
+            ${newPersonObject.name}`
+        );
+        setType("ADDED");
+        setTimeout(() => {
+          setMessage(null);
+          setType(null);
+        }, 5000);
         setPersons(persons.concat(newPerson));
+
+        setNewPerson("");
+        setNewNumber("");
       });
     }
-
-    setNewPerson("");
-    setNewNumber("");
   };
 
   const deleteNumber = (event) => {
@@ -84,6 +129,15 @@ const App = () => {
 
     if (window.confirm(`Delete ${getPerson[0].name}?`)) {
       person.deleteNumber(id).then((deleted) => {
+        setMessage(
+          `Deleted 
+            ${getPerson[0].name}`
+        );
+        setType("DELETED");
+        setTimeout(() => {
+          setMessage(null);
+          setType(null);
+        }, 5000);
         setPersons(persons.filter((person) => person.id != id));
       });
     }
@@ -99,6 +153,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} type={type} />
       <Filter filter={filter} handleFilter={handleFilter} />
 
       <h3>Add a new</h3>
