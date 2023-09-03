@@ -1,10 +1,13 @@
 const express = require("express");
 const morgan = require("morgan");
 const app = express();
-const PORT = 3001;
+const cors = require('cors')
+const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
 app.use(morgan("tiny"));
+app.use(cors())
+app.use(express.static('build'))
 
 let phoneDb = [
   {
@@ -37,9 +40,6 @@ const generateId = () => {
   return randomId;
 };
 
-app.get("/", (req, res) => {
-  res.send(`<h1>Hello World</h1>`);
-});
 app.get("/api/persons", (req, res) => {
   res.json(phoneDb);
 });

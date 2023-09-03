@@ -1,10 +1,10 @@
 GET http://localhost:3001/api/persons
 
 ###
-GET http://localhost:3001/api/persons/1931
+GET http://localhost:3001/api/persons/8849
 
 ###
-DELETE http://localhost:3001/api/persons/4
+DELETE http://localhost:3001/api/persons/8849
 
 
 ###
