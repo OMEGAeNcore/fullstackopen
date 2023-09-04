@@ -32,7 +32,6 @@ app.get("/api/persons/:id", (req, res) => {
 });
 app.get("/info", (req, res) => {
   Phonebook.count().then((noOfPeople) => {
-    console.log(noOfPeople);
     const getDate = new Date().toUTCString();
     res.send(`
     <div>
