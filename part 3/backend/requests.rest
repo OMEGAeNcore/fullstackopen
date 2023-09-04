@@ -1,10 +1,10 @@
 GET http://localhost:3001/api/persons
 
 ###
-GET http://localhost:3001/api/persons/8849
+GET http://localhost:3001/api/persons/64f5e7e0cd37fe1ddf2a6dee
 
 ###
-DELETE http://localhost:3001/api/persons/8849
+DELETE http://localhost:3001/api/persons/64f5f2d01fd2a402afac1ef8
 
 
 ###
@@ -14,4 +14,27 @@ Content-Type: application/json
 {
     "name" : "Aaron Hall",
     "number": 9546534555476
+}
+
+###
+PUT http://localhost:3001/api/persons/64f5ebc21469769ed5fa0ca9
+Content-Type: application/json
+
+{
+    "name" : "Aaron Hall",
+    "number": 9998675675
+}
+
+### Validation Checks
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": 9546534555476
+}
+###
+PUT http://localhost:3001/api/persons/64f5ee3d1469769ed5fa0cc4
+Content-Type: application/json
+
+{
 }
