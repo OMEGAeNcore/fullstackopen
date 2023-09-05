@@ -1,0 +1,13 @@
+GET http://localhost:3003/api/blogs
+
+###
+
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "title": "Somewhere in the Unknown",
+  "author": "Zelma",
+  "url": "www.somebloggers.com/somewhere-in-the-unknown",
+  "likes": 1034
+}

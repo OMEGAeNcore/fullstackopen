@@ -1,0 +1,25 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "bloglist app backend",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy:full": "git add . && git commit -m \"Exercise 4.1-4.2\" && git push",
+    "lint": "eslint ."
+  },
+  "author": "Ipshita Chakraborty",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^8.48.0",
+    "nodemon": "^3.0.1",
+    "shx": "^0.3.4"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "mongoose": "^7.5.0"
+  }
+}
