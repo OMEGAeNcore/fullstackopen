@@ -7,7 +7,7 @@
     "start": "cross-env NODE_ENV=production node index.js",
     "test": "cross-env NODE_ENV=test jest --verbose --runInBand",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
-    "deploy:full": "git add . && git commit -m \"Exercise 4.8-4.12\" && git push",
+    "deploy:full": "git add . && git commit -m \"Exercise 4.13-4.14\" && git push",
     "lint": "eslint ."
   },
   "author": "Ipshita Chakraborty",

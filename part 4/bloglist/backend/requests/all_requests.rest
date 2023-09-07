@@ -7,5 +7,20 @@ Content-Type: application/json
 
 {
   "title": "Kuruma",
-  "author": "Naruto1"
+  "author": "Naruto1",
+  "url": "www.somebloggers.com/kuruma"
 }
+###
+PUT http://localhost:3003/api/blogs/64fa07dd5d9f9b56efb4cade
+Content-Type: : application/json
+
+{
+  "author": "Buggy",
+  "likes": 45
+}
+
+###
+DELETE http://localhost:3003/api/blogs/64fa0be9aef691c3f7f88f08
+
+
+###
