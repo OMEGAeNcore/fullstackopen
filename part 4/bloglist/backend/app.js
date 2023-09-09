@@ -5,6 +5,7 @@ const mongoose = require('mongoose')
 
 // User-defined imports
 const blogRouter = require('./controllers/Blog')
+const userRouter = require('./controllers/Users')
 const config = require('./utils/config')
 const logger = require('./utils/logger')
 
@@ -23,6 +24,7 @@ app.use(express.json())
 
 // Router
 app.use('/api/blogs', blogRouter)
+app.use('/api/users', userRouter)
 
 
 module.exports = app
