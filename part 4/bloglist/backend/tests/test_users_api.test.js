@@ -59,4 +59,48 @@ describe('when there is initially one user in db', () => {
     const usersAtEnd = await helper.usersInDb()
     expect(usersAtEnd).toEqual(usersAtStart)
   })
+
+  test('checking length of password during creation', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'Checkers',
+      name: 'Superuser',
+      password: 'df',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('Password should be atleast 3 characters long.')
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd).toEqual(usersAtStart)
+  })
+
+  test('checking length of username during creation', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'df',
+      name: 'Checkers',
+      password: 'soendjghf',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain(
+      'Username should be atleast 3 characters long.'
+    )
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd).toEqual(usersAtStart)
+  })
 })

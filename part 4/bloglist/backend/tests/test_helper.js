@@ -1,6 +1,7 @@
 const Blog = require('../model/Blog')
 const User = require('../model/Users')
 const initBlogs = require('./testData').blogsList
+const initUsers = require('./testData').usersList
 
 const nonExistingId = async () => {
   const blog = new Blog({ content: 'willremovethissoon' })
@@ -22,6 +23,7 @@ const usersInDb = async () => {
 
 module.exports = {
   initBlogs,
+  initUsers,
   nonExistingId,
   blogsInDb,
   usersInDb,

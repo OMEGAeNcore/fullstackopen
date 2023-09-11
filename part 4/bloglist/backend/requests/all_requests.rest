@@ -9,7 +9,7 @@ Content-Type: application/json
   "title": "Kuruma",
   "author": "Naruto1",
   "url": "www.somebloggers.com/kuruma",
-  "userId": "64fa1f0c0d616394b70a000c"
+  "userId": "64fd816055353acf45cd5263"
 }
 ###
 PUT http://localhost:3003/api/blogs/64fa07dd5d9f9b56efb4cade
@@ -32,7 +32,32 @@ POST http://localhost:3003/api/users
 Content-Type: application/json
 
 {
-    "username": "root",
-    "name": "Superuser",
-    "password": "salainen"
+    "username": "sample",
+    "name": "testingUser",
+    "password": "sekret"
 }
+
+### Login
+POST http://localhost:3003/api/login
+Content-Type: application/json
+
+{
+  "username" : "sample",
+  "password" : "sekret"
+}
+
+### Making an authorized Blog POST
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbXBsZSIsImlkIjoiNjRmZjI5ODA1NTlhZGYxZTJmMDBiMjQ3IiwiaWF0IjoxNjk0NDQ1NzM3LCJleHAiOjE2OTQ0NDkzMzd9.oJB94EsS2-x0GYF1tu7xDA_8LsEGCkoEXX05VUJEDsU
+
+{
+  "title": "Token Authenticator Part III",
+  "author": "Bearer",
+  "url": "www.somebloggers.com/token-authenticator-part-iii",
+  "userId": "64fd816055353acf45cd5263"
+}
+
+###
+DELETE http://localhost:3003/api/blogs/64fd817b55353acf45cd5268
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Implcm1vIiwiaWQiOiI2NGZkODE2MDU1MzUzYWNmNDVjZDUyNjMiLCJpYXQiOjE2OTQzMzUzODksImV4cCI6MTY5NDMzODk4OX0.1IMmsikyiFQ-n3_FeM_Mp3gZBruHwgSa4l85RtjHrDw

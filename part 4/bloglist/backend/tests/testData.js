@@ -5,6 +5,7 @@ const blogsList = [
     author: 'Michael Chan',
     url: 'https://reactpatterns.com/',
     likes: 7,
+    user: '64ff4472677cf157ea3da178',
     __v: 0,
   },
   {
@@ -56,10 +57,24 @@ const listWithOneBlog = [
     author: 'Edsger W. Dijkstra',
     url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
     likes: 5,
+    user: '64ff2980559adf1e2f00b247',
+    __v: 0,
+  },
+]
+
+const usersList = [
+  {
+    _id: '64ff4472677cf157ea3da178',
+    username: 'sample',
+    name: 'testingUser',
+    passwordHash:
+      '$2b$10$0lLUuBpC8g4cNN8Flh4ewOdbRy22gJXe5peLBc0S00Q9es7sPiVgu',
+    blogs: [],
     __v: 0,
   },
 ]
 module.exports = {
   blogsList,
   listWithOneBlog,
+  usersList,
 }

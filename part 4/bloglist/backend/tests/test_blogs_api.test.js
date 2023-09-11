@@ -3,12 +3,31 @@ const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../model/Blog')
 const helper = require('./test_helper')
+const User = require('../model/Users')
+// const bcrypt = require('bcrypt')
+
+let userIdForTests
+let token
 
 const api = supertest(app)
 
 beforeEach(async () => {
   await Blog.deleteMany({})
   await Blog.insertMany(helper.initBlogs)
+
+  await User.deleteMany({})
+  await User.insertMany(helper.initUsers)
+  // const passwordHash = await bcrypt.hash('sekret', 10)
+  // const user = new User({ username: 'sample', passwordHash })
+  // const savedUser = await user.save()
+  // userIdForTests = savedUser._id.toString()
+  userIdForTests = helper.initUsers[0]._id
+
+  const userLogin = await supertest(app).post('/api/login').send({
+    username: 'sample',
+    password: 'sekret',
+  })
+  token = userLogin.body.token
 })
 
 describe('1. GET test suite', () => {
@@ -37,11 +56,13 @@ describe('2. POST test suite', () => {
       author: 'Edsger W. Dijkstra',
       url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
       likes: 5,
+      userId: userIdForTests,
     }
 
     await api
       .post('/api/blogs')
       .send(newBlog)
+      .auth(token, { type: 'bearer' })
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
@@ -52,6 +73,73 @@ describe('2. POST test suite', () => {
       'Go To Statement Considered Harmful'
     )
     expect(res.map((r) => r.author)).toContain('Edsger W. Dijkstra')
+  })
+
+  test('4.23 blog is posted without any token', async () => {
+    const newBlog = {
+      title: 'Go To Statement Considered Harmful',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+      likes: 5,
+      userId: userIdForTests,
+    }
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+      .then((response) => {
+        expect(response.body.error).toContain('jwt must be provided')
+      })
+
+    const res = await helper.blogsInDb()
+    expect(res).toHaveLength(helper.initBlogs.length)
+  })
+
+  test('4.23 blog is posted with unauthorized userId', async () => {
+    const newBlog = {
+      title: 'Go To Statement Considered Harmful',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+      likes: 5,
+      userId: '64fd816055353acf45cd5263',
+    }
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .auth(token, { type: 'bearer' })
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+      .then((response) => {
+        expect(response.body.error).toContain(
+          'User not unauthorized to make the post.'
+        )
+      })
+
+    const res = await helper.blogsInDb()
+    expect(res).toHaveLength(helper.initBlogs.length)
+  })
+
+  test('4.23 blog is posted with malformatted userId', async () => {
+    const newBlog = {
+      title: 'Go To Statement Considered Harmful',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+      likes: 5,
+      userId: '123',
+    }
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .auth(token, { type: 'bearer' })
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+      .then((response) => {
+        expect(response.body.error).toContain('malformatted id')
+      })
+
+    const res = await helper.blogsInDb()
+    expect(res).toHaveLength(helper.initBlogs.length)
   })
 })
 
@@ -66,11 +154,13 @@ describe('3. Test if Identifiers are present in added data', () => {
       title: 'Checking if I am Liked',
       author: 'Someone Unpredictable',
       url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+      userId: userIdForTests,
     }
 
     await api
       .post('/api/blogs')
       .send(newBlog)
+      .auth(token, { type: 'bearer' })
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
@@ -91,8 +181,26 @@ describe('3. Test if Identifiers are present in added data', () => {
       url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
     }
 
-    await api.post('/api/blogs').send(newBlogTitle).expect(400)
-    await api.post('/api/blogs').send(newBlogUrl).expect(400)
+    await api
+      .post('/api/blogs')
+      .send(newBlogTitle)
+      .auth(token, { type: 'bearer' })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.error).toContain(
+          'Title or Url of the data are missing.'
+        )
+      })
+    await api
+      .post('/api/blogs')
+      .send(newBlogUrl)
+      .auth(token, { type: 'bearer' })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.error).toContain(
+          'Title or Url of the data are missing.'
+        )
+      })
 
     const res = await helper.blogsInDb()
     expect(res).toHaveLength(helper.initBlogs.length)
@@ -120,10 +228,7 @@ describe('4. UPDATE test suite', () => {
   test('when no data is provided for update', async () => {
     const blogsAtStart = await helper.blogsInDb()
     const blogToUpdate = blogsAtStart[0]
-    await api
-      .put(`/api/blogs/${blogToUpdate.id}`)
-      .send({})
-      .expect(400)
+    await api.put(`/api/blogs/${blogToUpdate.id}`).send({}).expect(400)
   })
 
   test('when bad/wrong id provided for update', async () => {
@@ -136,7 +241,10 @@ describe('5. DELETE test suite', () => {
     const blogsAtStart = await helper.blogsInDb()
     const blogToDelete = blogsAtStart[0]
 
-    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204)
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .auth(token, { type: 'bearer' })
+      .expect(204)
 
     const blogsAtEnd = await helper.blogsInDb()
 
