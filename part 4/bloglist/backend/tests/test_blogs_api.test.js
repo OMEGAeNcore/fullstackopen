@@ -4,7 +4,6 @@ const app = require('../app')
 const Blog = require('../model/Blog')
 const helper = require('./test_helper')
 const User = require('../model/Users')
-// const bcrypt = require('bcrypt')
 
 let userIdForTests
 let token
@@ -17,10 +16,7 @@ beforeEach(async () => {
 
   await User.deleteMany({})
   await User.insertMany(helper.initUsers)
-  // const passwordHash = await bcrypt.hash('sekret', 10)
-  // const user = new User({ username: 'sample', passwordHash })
-  // const savedUser = await user.save()
-  // userIdForTests = savedUser._id.toString()
+
   userIdForTests = helper.initUsers[0]._id
 
   const userLogin = await supertest(app).post('/api/login').send({
