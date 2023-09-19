@@ -7,7 +7,6 @@ import Notification from "./components/Notification";
 import person from "./services/person";
 
 const App = () => {
-  const URL = "http://localhost:3001/persons";
   const [persons, setPersons] = useState(null);
   const [newPerson, setNewPerson] = useState("");
   const [newNumber, setNewNumber] = useState("");
@@ -25,8 +24,8 @@ const App = () => {
 
   useEffect(hook, []);
 
-  if(!persons){
-    return null
+  if (!persons) {
+    return null;
   }
 
   const handleNewPerson = (event) => {
@@ -87,15 +86,24 @@ const App = () => {
           setNewNumber("");
         })
         .catch((error) => {
-          setMessage(
-            `Information of  
+          if (error.response.data.error) {
+            setMessage(`${error.response.data.error}`);
+            setType("NO_DATA");
+            setTimeout(() => {
+              setMessage(null);
+              setType(null);
+            }, 5000);
+          } else {
+            setMessage(
+              `Information of  
             ${changedPersonObject.name} has already been removed from server`
-          );
-          setType("NO_DATA");
-          setTimeout(() => {
-            setMessage(null);
-            setType(null);
-          }, 5000);
+            );
+            setType("NO_DATA");
+            setTimeout(() => {
+              setMessage(null);
+              setType(null);
+            }, 5000);
+          }
         });
     } else {
       const newPersonObject = {
@@ -105,21 +113,33 @@ const App = () => {
       };
       setPersonIds(personIds + 1);
 
-      person.create(newPersonObject).then((newPerson) => {
-        setMessage(
-          `Added 
+      person
+        .create(newPersonObject)
+        .then((newPerson) => {
+          setMessage(
+            `Added 
             ${newPersonObject.name}`
-        );
-        setType("ADDED");
-        setTimeout(() => {
-          setMessage(null);
-          setType(null);
-        }, 5000);
-        setPersons(persons.concat(newPerson));
+          );
+          setType("ADDED");
+          setTimeout(() => {
+            setMessage(null);
+            setType(null);
+          }, 5000);
+          setPersons(persons.concat(newPerson));
 
-        setNewPerson("");
-        setNewNumber("");
-      });
+          setNewPerson("");
+          setNewNumber("");
+        })
+        .catch((error) => {
+          setMessage(
+            `${error.response.data.error}`
+          );
+          setType("NO_DATA");
+          setTimeout(() => {
+            setMessage(null);
+            setType(null);
+          }, 5000);
+        });
     }
   };
 
