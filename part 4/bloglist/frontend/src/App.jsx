@@ -11,8 +11,26 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [errorMsg, setErrorMsg] = useState('')
+  const [blogRender, setBlogRender] = useState(null)
 
-  
+  useEffect(() => {
+    const loggedInUser = window.localStorage.getItem('loggedInUser')
+    if (user || loggedInUser) {
+      const userLogged = JSON.parse(loggedInUser)
+      setUser(userLogged)
+      userService
+        .getBlogs(userLogged.id)
+        .then((user) => {
+          setBlogs(user.blogs)
+        })
+        .catch((error) => {
+          setErrorMsg(`Error Gettting Blogs`)
+          setTimeout(() => {
+            setErrorMsg(null)
+          }, 5000)
+        })
+    }
+  }, [blogRender])
 
   const loginUser = (event) => {
     event.preventDefault()
@@ -25,26 +43,24 @@ const App = () => {
     loginService
       .loginUser(userLogin)
       .then((response) => {
+        window.localStorage.setItem('loggedInUser', JSON.stringify(response))
         setUser(response)
+        setBlogRender(true)
         setUsername('')
         setPassword('')
-        userService.getBlogs(response.id).then((user) => {
-          setBlogs(user.blogs)
-        }).catch(error => {
-        console.log(error)
-      })
       })
       .catch((error) => {
         setErrorMsg(`Wrong Credentials: ${error.response.data.error}`)
         setTimeout(() => {
-        setErrorMsg(null)
-      }, 5000)
-        console.log(error.response.data.error)
+          setErrorMsg(null)
+        }, 5000)
       })
   }
 
   const logoutUser = (event) => {
     setUser(null)
+    setBlogRender(null)
+    window.localStorage.removeItem('loggedInUser')
   }
 
   const handleUsername = (event) => {
@@ -65,36 +81,38 @@ const App = () => {
   const errorShowcase = () => {
     return (
       <>
-        <div className="errorMessage">
-          {errorMsg}
-        </div>
+        <div className="errorMessage">{errorMsg}</div>
       </>
     )
   }
 
   const loginform = () => {
-    return (<>
-          <h2>log in to application</h2>
-          {errorShowcase()}
-          <LoginForm loginUser={loginUser} formHandlers={formHandlers} />
-        </>)
+    return (
+      <>
+        <h2>log in to application</h2>
+        {errorShowcase()}
+        <LoginForm loginUser={loginUser} formHandlers={formHandlers} />
+      </>
+    )
   }
 
   const bloglist = () => {
-    return (<>
-          <h2>blogs</h2>
-          <div className='userNav'>
-            {user.name} is logged in <br />
-          <button onClick={logoutUser} >logout</button>
-          </div><br />
-          <div className='blogList'>
-            {blogs.map((blog) => (
+    return (
+      <>
+        <h2>blogs</h2>
+        <div className="userNav">
+          {user.name} is logged in <br />
+          <button onClick={logoutUser}>logout</button>
+        </div>
+        <br />
+        <div className="blogList">
+          {blogs.map((blog) => (
             <Blog key={blog.id} blog={blog} />
           ))}
-          </div>
-        </>)
+        </div>
+      </>
+    )
   }
-
 
   return (
     <div>
